@@ -62,7 +62,7 @@ public:
         auto pair = m_order_map.find(order_id);
         if(pair == m_order_map.end()) {
             return;
-        }
+        } 
 
         uint32_t quantity = native_order<uint32_t>(p+19);
         uint32_t price;
