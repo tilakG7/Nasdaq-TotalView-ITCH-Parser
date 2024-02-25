@@ -54,6 +54,7 @@ public:
     // if not, the price is the same as the request price when the order was placed
     template<bool N>
     void execute(const char *const p) {
+        m_execute_counter++;
         updateTime(p+5);
         uint16_t stock_locate = getStockLocate(p);
         order_id_t order_id = getOrderId(p);
@@ -86,7 +87,38 @@ public:
         }
     }
 
+    void nonCrossTrade(const char* const p) {
+        m_non_cross_trade_counter++;
+    }
+
+    void crossTrade(const char* const p) {
+        m_cross_trade_counter++;
+    }    
+    void brokenTrade(const char* const p) {
+        m_broken_trade_counter++;
+    }
+    void printSizeOfRemainingOrders() {
+        std::cout << "Size of remaining orders:  " << m_order_map.size() << std::endl;
+        std::cout << "Sell order counter:        " << m_sell_order_counter << std::endl;
+        std::cout << "Buy order counter:         " << m_buy_order_counter << std::endl;
+        std::cout << "Orders executed:           " << m_execute_counter << std::endl;
+        std::cout << "Cacnels executed:          " << m_cancel_counter << std::endl;
+        std::cout << "Deletes executed:          " << m_delete_counter << std::endl;
+        std::cout << "Non corss trades executed: " << m_non_cross_trade_counter << std::endl;
+        std::cout << "Cross trades executed:     " << m_cross_trade_counter << std::endl;
+        std::cout << "Broken trades:             " << m_broken_trade_counter << std::endl;
+
+    }
+
 private:
+    uint64_t m_sell_order_counter{0U};
+    uint64_t m_buy_order_counter{0U};
+    uint64_t m_execute_counter{0U};
+    uint64_t m_non_cross_trade_counter{0U};
+    uint64_t m_cross_trade_counter{0U};
+    uint64_t m_broken_trade_counter{0U};
+    uint64_t m_cancel_counter{0U};
+    uint64_t m_delete_counter{0U};
     // returns the stock locate identifier
     // p_msg_begin - pointer to the beginning of the message
     // note: stock locate is located at an offset of 1 and is a 2 byte unsigned integer

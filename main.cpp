@@ -63,8 +63,19 @@ int main(int argc, char *argv[]) {
                 // order executed with price
                 p.execute<true>(s);
             break;
+            case 'P':
+                p.nonCrossTrade(s);
+            break;
+            case 'Q':
+                p.crossTrade(s);
+            break;
+            case 'B':
+                p.brokenTrade(s);
+            break;
         };
         s += packet_length; // move on to next packet
     }
+
+    p.printSizeOfRemainingOrders();
     return 0;
 }

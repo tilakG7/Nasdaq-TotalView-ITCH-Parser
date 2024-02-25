@@ -20,15 +20,15 @@ void Parser::stockDirectory(const char *const p_start) {
 }
 
 // Handle adding orders
-// NOTE: only considering buy orders. Sell orders are matched w/ buy orders,
-// thus, to keep track of VWAP, only need to track one side to prevent double counting
 void Parser::add(const char *const p) {
     updateTime(p+5);
     
-    // only add buy orders to our tracking:
-    if(p[19] != 'B') {
-        return;
-    }
+
+    // if(p[19] != 'B') {
+    m_sell_order_counter++;
+        // return;
+    // }
+    m_buy_order_counter++;
     order_id_t order_id = getOrderId(p);
     uint32_t quantity = native_order<uint32_t>(p+20);
     uint32_t price = native_order<uint32_t>(p+32);
@@ -37,6 +37,7 @@ void Parser::add(const char *const p) {
 }
 
 void Parser::cancel(const char *const p) {
+    m_cancel_counter++;
     updateTime(p+5);
     order_id_t order_id = getOrderId(p);
     uint32_t quantity_cancelled = native_order<uint32_t>(p+19);
@@ -51,6 +52,7 @@ void Parser::cancel(const char *const p) {
 }
 
 void Parser::del(const char *const p) {
+    m_delete_counter++;
     updateTime(p+5);
     order_id_t order_id = getOrderId(p);
     
@@ -66,7 +68,7 @@ void Parser::replace(const char *const p) {
 
     // Don't bother swapping endianness - order ID will be unique regardless
     order_id_t new_order_id = *reinterpret_cast<const order_id_t*>(p+19);
-    
+    m_buy_order_counter++;
     uint32_t quantity = native_order<uint32_t>(p+27);
     uint32_t price = native_order<uint32_t>(p+31);
     m_order_map.emplace(new_order_id, Order(price, quantity)); 
